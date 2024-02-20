@@ -21,6 +21,9 @@ class Fixture
     #[ORM\ManyToOne(inversedBy: 'fixtures')]
     private ?Club $awayClub = null;
 
+    #[ORM\OneToOne(inversedBy: 'fixture', cascade: ['persist', 'remove'])]
+    private ?Result $result = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,18 @@ class Fixture
     public function setAwayClub(?Club $awayClub): static
     {
         $this->awayClub = $awayClub;
+
+        return $this;
+    }
+
+    public function getResult(): ?Result
+    {
+        return $this->result;
+    }
+
+    public function setResult(?Result $result): static
+    {
+        $this->result = $result;
 
         return $this;
     }

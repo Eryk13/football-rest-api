@@ -19,6 +19,9 @@ class Result
     #[ORM\Column]
     private ?int $awayClubScore = null;
 
+    #[ORM\OneToOne(mappedBy: 'result', cascade: ['persist', 'remove'])]
+    private ?Fixture $fixture = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,28 @@ class Result
     public function setAwayClubScore(int $awayClubScore): static
     {
         $this->awayClubScore = $awayClubScore;
+
+        return $this;
+    }
+
+    public function getFixture(): ?Fixture
+    {
+        return $this->fixture;
+    }
+
+    public function setFixture(?Fixture $fixture): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($fixture === null && $this->fixture !== null) {
+            $this->fixture->setResult(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($fixture !== null && $fixture->getResult() !== $this) {
+            $fixture->setResult($this);
+        }
+
+        $this->fixture = $fixture;
 
         return $this;
     }
