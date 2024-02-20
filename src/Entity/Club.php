@@ -26,9 +26,17 @@ class Club
     #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'club')]
     private Collection $players;
 
+    #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'clubs')]
+    private Collection $tournaments;
+
+    #[ORM\OneToMany(targetEntity: Fixture::class, mappedBy: 'homeClub')]
+    private Collection $fixtures;
+
     public function __construct()
     {
         $this->players = new ArrayCollection();
+        $this->tournaments = new ArrayCollection();
+        $this->fixtures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,6 +92,63 @@ class Club
             // set the owning side to null (unless already changed)
             if ($player->getClub() === $this) {
                 $player->setClub(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tournament>
+     */
+    public function getTournaments(): Collection
+    {
+        return $this->tournaments;
+    }
+
+    public function addTournament(Tournament $tournament): static
+    {
+        if (!$this->tournaments->contains($tournament)) {
+            $this->tournaments->add($tournament);
+            $tournament->addClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTournament(Tournament $tournament): static
+    {
+        if ($this->tournaments->removeElement($tournament)) {
+            $tournament->removeClub($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Fixture>
+     */
+    public function getFixtures(): Collection
+    {
+        return $this->fixtures;
+    }
+
+    public function addFixture(Fixture $fixture): static
+    {
+        if (!$this->fixtures->contains($fixture)) {
+            $this->fixtures->add($fixture);
+            $fixture->setHomeClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFixture(Fixture $fixture): static
+    {
+        if ($this->fixtures->removeElement($fixture)) {
+            // set the owning side to null (unless already changed)
+            if ($fixture->getHomeClub() === $this) {
+                $fixture->setHomeClub(null);
             }
         }
 
