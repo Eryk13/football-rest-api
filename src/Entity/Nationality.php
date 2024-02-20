@@ -3,14 +3,14 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\ClubRepository;
+use App\Repository\NationalityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ClubRepository::class)]
+#[ORM\Entity(repositoryClass: NationalityRepository::class)]
 #[ApiResource]
-class Club
+class Nationality
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,10 +20,7 @@ class Club
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $stadiumName = null;
-
-    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'club')]
+    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'nationality')]
     private Collection $players;
 
     public function __construct()
@@ -48,18 +45,6 @@ class Club
         return $this;
     }
 
-    public function getStadiumName(): ?string
-    {
-        return $this->stadiumName;
-    }
-
-    public function setStadiumName(string $stadiumName): static
-    {
-        $this->stadiumName = $stadiumName;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Player>
      */
@@ -72,7 +57,7 @@ class Club
     {
         if (!$this->players->contains($player)) {
             $this->players->add($player);
-            $player->setClub($this);
+            $player->setNationality($this);
         }
 
         return $this;
@@ -82,8 +67,8 @@ class Club
     {
         if ($this->players->removeElement($player)) {
             // set the owning side to null (unless already changed)
-            if ($player->getClub() === $this) {
-                $player->setClub(null);
+            if ($player->getNationality() === $this) {
+                $player->setNationality(null);
             }
         }
 
