@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ClubRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,16 +12,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
-#[ApiResource]
+#[ApiResource(order: ['name' => 'ASC'])]
+#[ApiFilter(OrderFilter::class, properties: ['name' => 'ASC'], arguments: ['orderParameterName' => 'order'])]
 class Club
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['player:read', 'fixture:read'])]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['player:read'])]
+    #[Groups(['player:read', 'fixture:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
@@ -40,7 +45,6 @@ class Club
         $this->tournaments = new ArrayCollection();
         $this->fixtures = new ArrayCollection();
     }
-    #[Groups(['player:read'])]
     public function getId(): ?int
     {
         return $this->id;

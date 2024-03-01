@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\NationalityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +13,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: NationalityRepository::class)]
-#[ApiResource]
+#[ApiResource(order: ['name' => 'ASC'])]
+#[ApiFilter(OrderFilter::class, properties: ['name' => 'ASC'], arguments: ['orderParameterName' => 'order'])]
 class Nationality
 {
     #[ORM\Id]
