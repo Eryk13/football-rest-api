@@ -7,6 +7,7 @@ use App\Repository\ClubRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
 #[ApiResource]
@@ -18,6 +19,7 @@ class Club
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['player:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
@@ -38,7 +40,7 @@ class Club
         $this->tournaments = new ArrayCollection();
         $this->fixtures = new ArrayCollection();
     }
-
+    #[Groups(['player:read'])]
     public function getId(): ?int
     {
         return $this->id;

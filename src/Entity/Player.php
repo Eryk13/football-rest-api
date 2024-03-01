@@ -2,12 +2,17 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PlayerRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: [
+        'groups' => ['player:read']
+    ]
+)]
 class Player
 {
     #[ORM\Id]
@@ -16,18 +21,23 @@ class Player
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['player:read'])]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['player:read'])]
     private ?int $number = null;
 
-    #[ORM\ManyToOne(inversedBy: 'players')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'players')]
+    #[Groups(['player:read'])]
     private ?Club $club = null;
 
-    #[ORM\ManyToOne(inversedBy: 'players')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'players')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['player:read'])]
     private ?Nationality $nationality = null;
 
+    #[Groups(['player:read'])]
     public function getId(): ?int
     {
         return $this->id;
